@@ -1,26 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { API_BASE_URL } from '../lib/api';
+import { interactionsApi } from '../api/interactions.api';
 
 export default function LikeButton({ slug }: { slug: string }) {
   const [likes, setLikes] = useState<number>(0);
   const [liked, setLiked] = useState(false);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/likes/${slug}`)
-      .then(res => res.json())
+    interactionsApi.getLikes(slug)
       .then(data => setLikes(data.count))
       .catch(console.error);
   }, [slug]);
 
   const handleLike = async () => {
     setLiked(true);
-    setLikes(prev => prev + 1); // Optimistic update
+    setLikes(prev => prev + 1);
     
     try {
-      await fetch(`${API_BASE_URL}/api/likes/${slug}`, { method: 'POST' });
+      await interactionsApi.incrementLikes(slug);
     } catch (e) {
       console.error(e);
-      setLikes(prev => prev - 1); // Revert
+      setLikes(prev => prev - 1);
       setLiked(false);
     }
   };

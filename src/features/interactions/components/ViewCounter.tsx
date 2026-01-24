@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { API_BASE_URL } from '../lib/api';
+import { interactionsApi } from '../api/interactions.api';
 
 export default function ViewCounter({ slug }: { slug: string }) {
   const [views, setViews] = useState<number | null>(null);
 
   useEffect(() => {
     // Increment view count
-    fetch(`${API_BASE_URL}/api/views/${slug}`, { method: 'POST' })
-      .catch(console.error);
+    interactionsApi.incrementViews(slug).catch(console.error);
 
     // Fetch current view count
-    fetch(`${API_BASE_URL}/api/views/${slug}`)
-      .then(res => res.json())
+    interactionsApi.getViews(slug)
       .then(data => setViews(data.count))
       .catch(console.error);
   }, [slug]);
