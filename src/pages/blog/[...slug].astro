@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ViewCounter from '../../components/ViewCounter';
+import LikeButton from '../../components/LikeButton';
+import CommentSection from '../../components/CommentSection';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: post,
+  }));
+}
+
+const post = Astro.props;
+const { Content } = await post.render();
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article class="max-w-3xl mx-auto">
+    <div class="mb-8">
+      <div class="flex justify-between items-center text-gray-500 text-sm mb-2">
+        <time datetime={post.data.pubDate.toISOString()}>
+          {post.data.pubDate.toLocaleDateString()}
+        </time>
+        <ViewCounter client:load slug={post.slug} />
+      </div>
+      <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 mb-4">{post.data.title}</h1>
+      <p class="text-xl text-gray-500">{post.data.description}</p>
+    </div>
+
+    {post.data.heroImage && (
+      <img
+        src={post.data.heroImage}
+        alt=""
+        class="w-full h-auto rounded-lg shadow-lg mb-8"
+      />
+    )}
+
+    <div class="prose prose-lg prose-blue max-w-none">
+      <Content />
+    </div>
+
+    <hr class="my-12 border-gray-200" />
+
+    <div class="flex items-center justify-between mb-12 bg-gray-50 p-6 rounded-2xl">
+      <h3 class="text-lg font-bold">Did you like this post?</h3>
+      <LikeButton client:load slug={post.slug} />
+    </div>
+
+    <CommentSection client:visible slug={post.slug} />
+  </article>
+</BaseLayout>

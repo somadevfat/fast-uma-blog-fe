@@ -1,0 +1,41 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "A fast blog & portfolio built with Astro and ElysiaJS" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body class="bg-white text-gray-900 min-h-screen flex flex-col">
+    <header class="border-b border-gray-200 sticky top-0 bg-white/80 backdrop-blur-sm z-10">
+      <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <a href="/" class="text-2xl font-black text-blue-600 tracking-tighter">FastUma</a>
+        <div class="space-x-6 text-sm font-medium text-gray-600">
+          <a href="/blog" class="hover:text-blue-600 transition">Blog</a>
+          <a href="/portfolio" class="hover:text-blue-600 transition">Portfolio</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <slot />
+    </main>
+
+    <footer class="bg-gray-50 border-t border-gray-200 mt-12 py-8 text-center text-sm text-gray-500">
+      <p>&copy; {new Date().getFullYear()} Fast Uma Blog. Built with Astro & Elysia.</p>
+    </footer>
+  </body>
+</html>

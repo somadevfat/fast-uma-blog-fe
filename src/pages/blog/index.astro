@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<BaseLayout title="Blog | Fast Uma">
+  <section class="max-w-4xl mx-auto">
+    <h1 class="text-4xl font-bold mb-12">Blog Posts</h1>
+    <div class="space-y-12">
+      {posts.map((post) => (
+        <a href={`/blog/${post.slug}`} class="block group">
+          <article class="flex flex-col md:flex-row gap-6 items-start">
+             {/* Image placeholder if needed */}
+             <div class="flex-1">
+                <h2 class="text-2xl font-bold mb-2 group-hover:text-blue-600 transition">{post.data.title}</h2>
+                <div class="text-sm text-gray-400 mb-3">
+                  <time datetime={post.data.pubDate.toISOString()}>
+                    {post.data.pubDate.toLocaleDateString()}
+                  </time>
+                  {post.data.tags && (
+                    <span class="ml-2">
+                       • {post.data.tags.join(', ')}
+                    </span>
+                  )}
+                </div>
+                <p class="text-gray-600 leading-relaxed">{post.data.description}</p>
+             </div>
+          </article>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
