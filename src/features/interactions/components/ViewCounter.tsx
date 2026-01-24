@@ -5,13 +5,21 @@ export default function ViewCounter({ slug }: { slug: string }) {
   const [views, setViews] = useState<number | null>(null);
 
   useEffect(() => {
-    // Increment view count
-    interactionsApi.incrementViews(slug).catch(console.error);
+    const incrementAndFetchViews = async () => {
+      try {
+        await interactionsApi.incrementViews(slug);
+        const data = await interactionsApi.getViews(slug);
+        setViews(data.count);
+      } catch (error) {
+        console.error('Failed to update or fetch view count:', error);
+        // Fallback
+        interactionsApi.getViews(slug)
+          .then(data => setViews(data.count))
+          .catch(console.error);
+      }
+    };
 
-    // Fetch current view count
-    interactionsApi.getViews(slug)
-      .then(data => setViews(data.count))
-      .catch(console.error);
+    incrementAndFetchViews();
   }, [slug]);
 
   if (views === null) return <span className="text-gray-400 text-sm">Loading...</span>;

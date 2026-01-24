@@ -1,41 +1,52 @@
 import { API_BASE_URL } from '../../../lib/api';
 
 export interface Comment {
-  id?: number;
+  id: number;
   slug: string;
   content: string;
   created_at: number;
 }
 
+export type NewCommentPayload = Pick<Comment, 'content'>;
+
 export const interactionsApi = {
   // Views
-  getViews: async (slug: string) => {
+  getViews: async (slug: string): Promise<{ count: number }> => {
     const res = await fetch(`${API_BASE_URL}/api/views/${slug}`);
-    return res.json() as Promise<{ count: number }>;
+    if (!res.ok) throw new Error('Failed to fetch views');
+    return res.json();
   },
-  incrementViews: async (slug: string) => {
-    return fetch(`${API_BASE_URL}/api/views/${slug}`, { method: 'POST' });
+  incrementViews: async (slug: string): Promise<Response> => {
+    const res = await fetch(`${API_BASE_URL}/api/views/${slug}`, { method: 'POST' });
+    if (!res.ok) throw new Error('Failed to increment views');
+    return res;
   },
 
   // Likes
-  getLikes: async (slug: string) => {
+  getLikes: async (slug: string): Promise<{ count: number }> => {
     const res = await fetch(`${API_BASE_URL}/api/likes/${slug}`);
-    return res.json() as Promise<{ count: number }>;
+    if (!res.ok) throw new Error('Failed to fetch likes');
+    return res.json();
   },
-  incrementLikes: async (slug: string) => {
-    return fetch(`${API_BASE_URL}/api/likes/${slug}`, { method: 'POST' });
+  incrementLikes: async (slug: string): Promise<Response> => {
+    const res = await fetch(`${API_BASE_URL}/api/likes/${slug}`, { method: 'POST' });
+    if (!res.ok) throw new Error('Failed to increment likes');
+    return res;
   },
 
   // Comments
-  getComments: async (slug: string) => {
+  getComments: async (slug: string): Promise<Comment[]> => {
     const res = await fetch(`${API_BASE_URL}/api/comments/${slug}`);
-    return res.json() as Promise<Comment[]>;
+    if (!res.ok) throw new Error('Failed to fetch comments');
+    return res.json();
   },
-  postComment: async (slug: string, content: string) => {
-    return fetch(`${API_BASE_URL}/api/comments/${slug}`, {
+  postComment: async (slug: string, content: string): Promise<Comment> => {
+    const res = await fetch(`${API_BASE_URL}/api/comments/${slug}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content }),
     });
+    if (!res.ok) throw new Error('Failed to post comment');
+    return res.json();
   },
 };

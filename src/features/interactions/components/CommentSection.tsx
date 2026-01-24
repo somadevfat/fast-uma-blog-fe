@@ -18,11 +18,9 @@ export default function CommentSection({ slug }: { slug: string }) {
 
     setLoading(true);
     try {
-      await interactionsApi.postComment(slug, newComment);
-      
-      // Reload comments
-      const data = await interactionsApi.getComments(slug);
-      setComments(data);
+      const newCommentData = await interactionsApi.postComment(slug, newComment);
+      // 再フェッチせずにステートを更新 (効率化)
+      setComments(prev => [newCommentData, ...prev]);
       setNewComment('');
     } catch (e) {
       console.error(e);
@@ -54,8 +52,8 @@ export default function CommentSection({ slug }: { slug: string }) {
       </form>
 
       <div className="space-y-4">
-        {comments.map((comment, index) => (
-          <div key={comment.id || index} className="p-4 bg-gray-50 rounded-lg">
+        {comments.map((comment) => (
+          <div key={comment.id} className="p-4 bg-gray-50 rounded-lg">
             <p className="text-gray-800">{comment.content}</p>
             <p className="text-xs text-gray-500 mt-2">
               {new Date(comment.created_at).toLocaleString()}

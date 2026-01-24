@@ -19,7 +19,7 @@ describe("LikeButton", () => {
   });
 
   it("初期表示でいいね数が取得・表示されること", async () => {
-    (interactionsApi.getLikes as any).mockResolvedValueOnce({ count: 5 });
+    vi.mocked(interactionsApi.getLikes).mockResolvedValueOnce({ count: 5 });
 
     render(<LikeButton slug={slug} />);
 
@@ -30,8 +30,8 @@ describe("LikeButton", () => {
   });
 
   it("クリック時にいいね数が増え、ステータスが変わること", async () => {
-    (interactionsApi.getLikes as any).mockResolvedValueOnce({ count: 5 });
-    (interactionsApi.incrementLikes as any).mockResolvedValueOnce({ success: true });
+    vi.mocked(interactionsApi.getLikes).mockResolvedValueOnce({ count: 5 });
+    vi.mocked(interactionsApi.incrementLikes).mockResolvedValueOnce(new Response());
 
     render(<LikeButton slug={slug} />);
 
