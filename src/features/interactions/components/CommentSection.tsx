@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API_BASE_URL } from '../lib/api';
-
-interface Comment {
-  id: number;
-  content: string;
-  created_at: number; // timestamp
-}
+import { interactionsApi, type Comment } from '../api/interactions.api';
 
 export default function CommentSection({ slug }: { slug: string }) {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -13,8 +7,7 @@ export default function CommentSection({ slug }: { slug: string }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/comments/${slug}`)
-      .then(res => res.json())
+    interactionsApi.getComments(slug)
       .then(data => setComments(data))
       .catch(console.error);
   }, [slug]);
@@ -25,16 +18,9 @@ export default function CommentSection({ slug }: { slug: string }) {
 
     setLoading(true);
     try {
-      await fetch(`${API_BASE_URL}/api/comments/${slug}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: newComment }),
-      });
-      
-      // Reload comments
-      const res = await fetch(`${API_BASE_URL}/api/comments/${slug}`);
-      const data = await res.json();
-      setComments(data);
+      const newCommentData = await interactionsApi.postComment(slug, newComment);
+      // 再フェッチせずにステートを更新 (効率化)
+      setComments(prev => [newCommentData, ...prev]);
       setNewComment('');
     } catch (e) {
       console.error(e);
