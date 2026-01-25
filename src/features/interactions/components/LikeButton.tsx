@@ -28,19 +28,13 @@ export default function LikeButton({ slug }: { slug: string }) {
     <button
       onClick={handleLike}
       disabled={liked}
-      className={`group relative flex items-center gap-2 px-8 py-3 rounded-2xl font-black transition-all duration-300 ${
+      className={`px-4 py-2 rounded-full font-bold transition-all ${
         liked 
-          ? 'bg-accent text-white shadow-lg shadow-accent/20 cursor-default' 
-          : 'glass hover:bg-white/10 text-foreground hover:scale-105 active:scale-95'
+          ? 'bg-pink-100 text-pink-600 cursor-default' 
+          : 'bg-gray-100 hover:bg-pink-50 text-gray-700 hover:text-pink-500'
       }`}
     >
-      <span className={`text-xl transition-transform duration-500 ${liked ? 'scale-125' : 'group-hover:scale-110'}`}>
-        {liked ? '❤️' : '🤍'}
-      </span>
-      <span>{liked ? 'いいねしました！' : 'いいね！'}</span>
-      <span className={`ml-1 px-2 py-0.5 rounded-full text-xs ${liked ? 'bg-white/20' : 'bg-accent/20 text-accent'}`}>
-        {likes}
-      </span>
+      {liked ? '❤️ Liked!' : '🤍 Like'} <span className="ml-1">{likes}</span>
     </button>
   );
 }
