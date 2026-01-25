@@ -5,6 +5,8 @@ import ViewCounter from '../../features/interactions/components/ViewCounter';
 import LikeButton from '../../features/interactions/components/LikeButton';
 import CommentSection from '../../features/interactions/components/CommentSection';
 
+export const prerender = true;
+
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map(post => ({
@@ -17,38 +19,71 @@ const post = Astro.props;
 const { Content } = await post.render();
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description}>
-  <article class="max-w-3xl mx-auto">
-    <div class="mb-8">
-      <div class="flex justify-between items-center text-gray-500 text-sm mb-2">
-        <time datetime={post.data.pubDate.toISOString()}>
-          {post.data.pubDate.toLocaleDateString()}
+<BaseLayout title={`${post.data.title} | fanda-dev.com`} description={post.data.description}>
+  <div class="max-w-4xl mx-auto">
+    <!-- Breadcrumb -->
+    <nav class="flex gap-2 text-xs font-black tracking-widest text-muted uppercase mb-12">
+      <a href="/" class="hover:text-accent transition">Home</a>
+      <span>/</span>
+      <a href="/blog" class="hover:text-accent transition">Blog</a>
+      <span>/</span>
+      <span class="text-accent">Article</span>
+    </nav>
+
+    <header class="mb-16">
+      <div class="flex flex-wrap items-center gap-4 text-xs font-black text-muted mb-6">
+        <time datetime={post.data.pubDate.toISOString()} class="px-4 py-1.5 glass rounded-full border-white/5 uppercase tracking-widest">
+          {post.data.pubDate.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' })}
         </time>
-        <ViewCounter client:load slug={post.slug} />
+        <div class="flex items-center gap-2">
+           <ViewCounter client:load slug={post.slug} />
+        </div>
       </div>
-      <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 mb-4">{post.data.title}</h1>
-      <p class="text-xl text-gray-500">{post.data.description}</p>
-    </div>
+      
+      <h1 class="text-4xl md:text-6xl font-black mb-8 leading-[1.2] tracking-tighter">
+        {post.data.title}
+      </h1>
+      
+      <p class="text-xl text-muted leading-relaxed font-bold">
+        {post.data.description}
+      </p>
+    </header>
 
     {post.data.heroImage && (
-      <img
-        src={post.data.heroImage}
-        alt=""
-        class="w-full h-auto rounded-lg shadow-lg mb-8"
-      />
+      <div class="relative mb-20 group">
+        <div class="absolute -inset-1 bg-gradient-to-r from-accent to-accent-secondary rounded-3xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
+        <img
+          src={post.data.heroImage}
+          alt=""
+          class="relative w-full h-auto rounded-3xl shadow-2xl border border-white/5"
+        />
+      </div>
     )}
 
-    <div class="prose prose-lg prose-blue max-w-none">
+    <div class="prose prose-invert prose-pink max-w-none 
+      prose-headings:font-black prose-headings:tracking-tighter
+      prose-p:font-medium prose-p:leading-relaxed
+      prose-a:text-accent hover:prose-a:text-accent/80 transition-colors
+      prose-img:rounded-3xl prose-img:shadow-xl
+      mb-32">
       <Content />
     </div>
 
-    <hr class="my-12 border-gray-200" />
+    <footer class="mt-32">
+      <div class="glass p-12 rounded-[2.5rem] border-white/5 flex flex-col md:flex-row items-center justify-between gap-10 mb-20 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent to-accent-secondary"></div>
+        <div class="text-center md:text-left relative">
+          <h3 class="text-3xl font-black mb-3 tracking-tight text-white">この記事はいかがでしたか？</h3>
+          <p class="text-muted font-bold">「いいね」での応援や、コメントをお待ちしております。</p>
+        </div>
+        <div class="relative">
+          <LikeButton client:load slug={post.slug} />
+        </div>
+      </div>
 
-    <div class="flex items-center justify-between mb-12 bg-gray-50 p-6 rounded-2xl">
-      <h3 class="text-lg font-bold">Did you like this post?</h3>
-      <LikeButton client:load slug={post.slug} />
-    </div>
-
-    <CommentSection client:visible slug={post.slug} />
-  </article>
+      <div class="max-w-3xl mx-auto">
+        <CommentSection client:visible slug={post.slug} />
+      </div>
+    </footer>
+  </div>
 </BaseLayout>

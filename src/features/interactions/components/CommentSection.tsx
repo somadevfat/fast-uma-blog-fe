@@ -19,7 +19,6 @@ export default function CommentSection({ slug }: { slug: string }) {
     setLoading(true);
     try {
       const newCommentData = await interactionsApi.postComment(slug, newComment);
-      // 再フェッチせずにステートを更新 (効率化)
       setComments(prev => [newCommentData, ...prev]);
       setNewComment('');
     } catch (e) {
@@ -30,38 +29,50 @@ export default function CommentSection({ slug }: { slug: string }) {
   };
 
   return (
-    <div className="mt-8">
-      <h3 className="text-xl font-bold mb-4">Comments ({comments.length})</h3>
+    <div className="mt-16 pt-16 border-t border-white/5">
+      <h3 className="text-3xl font-black mb-8 tracking-tight flex items-center gap-4">
+        コメント
+        <span className="text-sm font-bold bg-white/5 px-3 py-1 rounded-full text-muted">{comments.length}</span>
+      </h3>
       
-      <form onSubmit={handleSubmit} className="mb-6">
-        <textarea
-          className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-          rows={3}
-          placeholder="Leave a comment..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          disabled={loading}
-        />
-        <button
-          type="submit"
-          disabled={loading || !newComment.trim()}
-          className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-        >
-          {loading ? 'Posting...' : 'Post Comment'}
-        </button>
+      <form onSubmit={handleSubmit} className="mb-12">
+        <div className="glass p-1 rounded-3xl focus-within:border-accent/30 transition-all duration-300">
+          <textarea
+            className="w-full p-6 bg-transparent text-foreground placeholder:text-muted outline-none resize-none min-h-[120px] font-medium"
+            placeholder="コメントを残す..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            disabled={loading}
+          />
+          <div className="flex justify-end p-2">
+            <button
+              type="submit"
+              disabled={loading || !newComment.trim()}
+              className="px-6 py-3 bg-white text-black rounded-2xl font-black hover:bg-accent hover:text-white disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-black transition-all duration-300"
+            >
+              {loading ? '投稿中...' : 'コメントを投稿'}
+            </button>
+          </div>
+        </div>
       </form>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         {comments.map((comment) => (
-          <div key={comment.id} className="p-4 bg-gray-50 rounded-lg">
-            <p className="text-gray-800">{comment.content}</p>
-            <p className="text-xs text-gray-500 mt-2">
-              {new Date(comment.created_at).toLocaleString()}
-            </p>
+          <div key={comment.id} className="glass p-8 rounded-3xl border-white/5 relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-accent to-accent-secondary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <p className="text-foreground leading-relaxed text-lg mb-4 font-medium">{comment.content}</p>
+            <div className="flex items-center gap-2">
+               <div className="w-6 h-6 rounded-full bg-gradient-to-br from-accent/20 to-accent-secondary/20 flex items-center justify-center text-[10px] font-black text-accent">U</div>
+               <time className="text-[10px] font-black text-muted uppercase tracking-widest">
+                {new Date(comment.created_at).toLocaleString('ja-JP')}
+              </time>
+            </div>
           </div>
         ))}
         {comments.length === 0 && (
-          <p className="text-gray-500 italic">No comments yet.</p>
+          <div className="glass p-12 rounded-3xl border-dashed border-white/10 text-center">
+             <p className="text-muted font-bold italic">まだコメントはありません。最初の感想を書き込んでみませんか？</p>
+          </div>
         )}
       </div>
     </div>
