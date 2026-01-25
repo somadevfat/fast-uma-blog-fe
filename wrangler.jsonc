@@ -1,6 +1,7 @@
 {
     "name": "fast-uma-blog-fe",
     "compatibility_date": "2026-01-25",
+    "main": "./dist/_worker.js",
     "assets": {
         "directory": "./dist"
     }
