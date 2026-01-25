@@ -1,0 +1,121 @@
+---
+export const prerender = false;
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { API_BASE_URL } from "../../lib/api";
+
+const response = await fetch(`${API_BASE_URL}/posts`);
+const { data: posts = [] } = await response.json();
+---
+
+<AdminLayout title="記事管理">
+  <div class="flex justify-between items-end mb-12">
+    <div>
+      <h1 class="text-4xl font-black font-['Outfit'] tracking-tighter mb-2">
+        Article <span class="text-gradient">Management</span>
+      </h1>
+      <p class="text-gray-500 font-medium">
+        コンテンツの作成、編集、公開設定を一括管理します。
+      </p>
+    </div>
+    <a href="/admin/edit/new" class="relative group">
+      <div
+        class="absolute -inset-0.5 bg-gradient-to-r from-pink-500 to-purple-600 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-300"
+      >
+      </div>
+      <div
+        class="relative bg-white text-black font-black px-6 py-3 rounded-xl hover:scale-[1.02] transition-transform flex items-center gap-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-5 h-5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          ><line x1="12" y1="5" x2="12" y2="19"></line><line
+            x1="5"
+            y1="12"
+            x2="19"
+            y2="12"></line></svg
+        >
+        New Post
+      </div>
+    </a>
+  </div>
+
+  <div class="glass rounded-3xl overflow-hidden shadow-2xl">
+    <table class="min-w-full divide-y divide-white/5">
+      <thead class="bg-white/5">
+        <tr>
+          <th
+            class="px-8 py-5 text-left text-xs font-black text-gray-400 uppercase tracking-[0.2em]"
+            >Title & Path</th
+          >
+          <th
+            class="px-8 py-5 text-left text-xs font-black text-gray-400 uppercase tracking-[0.2em]"
+            >Status</th
+          >
+          <th
+            class="px-8 py-5 text-left text-xs font-black text-gray-400 uppercase tracking-[0.2em]"
+            >Created At</th
+          >
+          <th
+            class="px-8 py-5 text-right text-xs font-black text-gray-400 uppercase tracking-[0.2em]"
+            >Actions</th
+          >
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-white/5">
+        {
+          posts.length === 0 ? (
+            <tr>
+              <td
+                colspan="4"
+                class="px-8 py-20 text-center text-gray-500 font-medium italic"
+              >
+                No articles found. Click "New Post" to get started.
+              </td>
+            </tr>
+          ) : (
+            posts.map((post: any) => (
+              <tr class="hover:bg-white/[0.02] transition-colors group">
+                <td class="px-8 py-6">
+                  <div class="font-bold text-white mb-1 group-hover:text-pink-400 transition-colors">
+                    {post.title}
+                  </div>
+                  <div class="text-[10px] font-mono text-gray-500">
+                    /{post.slug}
+                  </div>
+                </td>
+                <td class="px-8 py-6">
+                  <span
+                    class={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full border ${post.published ? "bg-green-500/10 text-green-500 border-green-500/20" : "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"}`}
+                  >
+                    {post.published ? "Published" : "Draft"}
+                  </span>
+                </td>
+                <td class="px-8 py-6 text-sm text-gray-400 font-medium">
+                  {new Date(post.createdAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                  })}
+                </td>
+                <td class="px-8 py-6 text-right">
+                  <a
+                    href={`/admin/edit/${post.slug}`}
+                    class="text-sm font-black text-white px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
+                  >
+                    Edit
+                  </a>
+                </td>
+              </tr>
+            ))
+          )
+        }
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>
