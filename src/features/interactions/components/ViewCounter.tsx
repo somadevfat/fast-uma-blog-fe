@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { interactionsApi } from '../api/interactions.api';
 
-export default function ViewCounter({ slug }: { slug: string }) {
+export default function ViewCounter({ slug, simple }: { slug: string, simple?: boolean }) {
   const [views, setViews] = useState<number | null>(null);
 
   useEffect(() => {
@@ -22,11 +22,20 @@ export default function ViewCounter({ slug }: { slug: string }) {
     incrementAndFetchViews();
   }, [slug]);
 
-  if (views === null) return <span className="text-gray-400 text-sm">Loading...</span>;
+  if (views === null) return null;
+
+  if (simple) {
+    return (
+      <span className="text-[10px] font-black tracking-widest text-gray-500 uppercase">
+        {views} Views
+      </span>
+    );
+  }
 
   return (
-    <span className="text-gray-600 text-sm flex items-center gap-1">
-      👁️ {views}
+    <span className="text-muted text-xs font-black tracking-widest flex items-center gap-2 uppercase">
+      <div className="w-1 h-1 rounded-full bg-accent"></div>
+      {views} Views
     </span>
   );
 }
