@@ -64,3 +64,25 @@ Astroコンポーネントの中で Reactコンポーネントを呼び出し、
 - **Utility-First**: 原則として Tailwind のクラスのみでスタイリングする。
 - **Responsive**: `md:`, `lg:` を活用したモバイルファースト設計。
 - **Modern CSS**: v4 の機能を活用し、`theme()` 関数や新しい構文を適切に使用する。
+
+## Design Aesthetics
+
+1. **Premium Look**: 管理画面であっても、Apple製品やモダンなSaaSのような、洗練された「プレミアム感」を出すこと。
+2. **Visual Hierarchy**: タイポグラフィ（Outfit, Inter等）、余白、コントラストを適切に使い、情報の優先順位を明確にする。
+3. **Advanced Styles**: 単調な背景ではなく、微妙なグラデーション、グラスモーフィズム（透過・ぼかし）、洗練されたダークモードを活用する。
+4. **Micro-animations**: ホバー時の挙動や画面遷移にスムーズなアニメーションを加え、プロダクトが「生きている」感覚を与える。
+5. **No Placeholders**: プレースホルダーは使わず、常に完成されたビジュアルを追求する。
+
+## TDD & Testing Guidelines
+
+1. **Testing Framework**: Vitest を使用。
+2. **Component Testing**: 
+   - 複雑なロジックを持つ React コンポーネントは React Testing Library でテストする。
+   - 純粋な表示のみのコンポーネントは無理にテストせず、Storybook等での視覚的確認を優先する。
+3. **Hook Testing**: カスタム Hook は `renderHook` を用いて単体テストを行う。
+
+## CMS & Admin Guidelines
+
+1. **Admin Directory**: 管理機能は `src/pages/admin/` 配下に配置する。
+2. **Editor**: Markdown エディタを統合し、プレビュー機能を持たせる。
+3. **Security**: シンプルな認証（Basic認証や環境変数によるトークンチェック）を導入する。

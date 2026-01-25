@@ -1,22 +1,58 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ViewCounter from '../../features/interactions/components/ViewCounter';
 import LikeButton from '../../features/interactions/components/LikeButton';
 import CommentSection from '../../features/interactions/components/CommentSection';
+import { API_BASE_URL } from '../../lib/api';
+import { marked } from 'marked';
 
-export const prerender = true;
+// SSR mode
+export const prerender = false;
 
-export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map(post => ({
-    params: { slug: post.slug },
-    props: post,
-  }));
+const { slug } = Astro.params;
+
+let post: any = null;
+let isDbPost = false;
+let Content: any = null;
+
+// 1. Try DB
+try {
+  const response = await fetch(`${API_BASE_URL}/posts/${slug}`);
+  const result = await response.json();
+  if (result.success) {
+    const data = result.data;
+    post = {
+      slug: data.slug,
+      data: {
+        title: data.title,
+        description: "", // DB posts might need this column later
+        pubDate: new Date(data.createdAt),
+        heroImage: "", // DB posts might need this too
+      },
+      content: data.content
+    };
+    isDbPost = true;
+  }
+} catch (e) {
+  console.error('DB Fetch error', e);
 }
 
-const post = Astro.props;
-const { Content } = await post.render();
+// 2. Try File
+if (!isDbPost) {
+  const entry = await getEntry('blog', slug as any);
+  if (entry) {
+    const rendered = await entry.render();
+    Content = rendered.Content;
+    post = entry;
+  }
+}
+
+if (!post) {
+  return Astro.redirect('/404');
+}
+
+const htmlContent = isDbPost ? await marked.parse(post.content) : '';
 ---
 
 <BaseLayout title={`${post.data.title} | fanda-dev.com`} description={post.data.description}>
@@ -66,7 +102,7 @@ const { Content } = await post.render();
       prose-a:text-accent hover:prose-a:text-accent/80 transition-colors
       prose-img:rounded-3xl prose-img:shadow-xl
       mb-32">
-      <Content />
+      {isDbPost ? <Fragment set:html={htmlContent} /> : <Content />}
     </div>
 
     <footer class="mt-32">

@@ -1,10 +1,36 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
-import ViewCounter from '../../features/interactions/components/ViewCounter';
+export const prerender = false;
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import ViewCounter from "../../features/interactions/components/ViewCounter";
+import { API_BASE_URL } from "../../lib/api";
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+// 1. Fetch File posts
+const filePosts = await getCollection("blog");
+
+// 2. Fetch DB posts
+let dbPosts: any[] = [];
+try {
+  const response = await fetch(`${API_BASE_URL}/posts`);
+  const result = await response.json();
+  if (result.success) {
+    dbPosts = result.data.map((post: any) => ({
+      slug: post.slug,
+      data: {
+        title: post.title,
+        description: "", // Fallback or add to DB
+        pubDate: new Date(post.createdAt),
+        tags: [], // Fallback
+      },
+    }));
+  }
+} catch (e) {
+  console.error("Failed to fetch DB posts", e);
+}
+
+// 3. Combine and Sort
+const allPosts = [...filePosts, ...dbPosts].sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 ---
 
@@ -20,22 +46,23 @@ const posts = (await getCollection('blog')).sort(
     </header>
 
     <div class="grid gap-8">
-      {posts.map((post) => (
-        <a href={`/blog/${post.slug}`} class="group">
-          <article class="glass p-8 rounded-3xl border-white/5 hover:border-accent/30 transition-all duration-500 relative overflow-hidden">
-             <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 blur-3xl -z-10 group-hover:bg-accent/10 transition-colors"></div>
-             
-             <div class="flex flex-col gap-4">
+      {
+        allPosts.map((post) => (
+          <a href={`/blog/${post.slug}`} class="group">
+            <article class="glass p-8 rounded-3xl border-white/5 hover:border-accent/30 transition-all duration-500 relative overflow-hidden">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 blur-3xl -z-10 group-hover:bg-accent/10 transition-colors" />
+
+              <div class="flex flex-col gap-4">
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-4 text-xs font-black tracking-widest text-muted uppercase">
                     <time datetime={post.data.pubDate.toISOString()}>
-                      {post.data.pubDate.toLocaleDateString('ja-JP')}
+                      {post.data.pubDate.toLocaleDateString("ja-JP")}
                     </time>
                     {post.data.tags && (
                       <div class="flex gap-2">
-                         {post.data.tags.slice(0, 2).map(tag => (
-                           <span class="text-accent"># {tag}</span>
-                         ))}
+                        {post.data.tags.slice(0, 2).map((tag: string) => (
+                          <span class="text-accent"># {tag}</span>
+                        ))}
                       </div>
                     )}
                   </div>
@@ -45,21 +72,33 @@ const posts = (await getCollection('blog')).sort(
                 <h2 class="text-3xl font-black group-hover:text-gradient transition-all duration-300">
                   {post.data.title}
                 </h2>
-                
+
                 <p class="text-muted leading-relaxed line-clamp-2 font-medium">
                   {post.data.description}
                 </p>
 
                 <div class="mt-4 flex items-center gap-2 text-sm font-black text-foreground group-hover:text-accent transition-colors">
                   記事を読む
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="3"
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
                   </svg>
                 </div>
-             </div>
-          </article>
-        </a>
-      ))}
+              </div>
+            </article>
+          </a>
+        ))
+      }
     </div>
   </section>
 </BaseLayout>

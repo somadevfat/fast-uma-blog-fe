@@ -1,0 +1,109 @@
+---
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ja">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Outfit:wght@400;700;900&display=swap"
+			rel="stylesheet"
+		/>
+		<title>{title} | Admin CMS</title>
+	</head>
+	<body
+		class="bg-[#050505] text-white font-['Inter'] selection:bg-pink-500/30"
+	>
+		<!-- Background glow -->
+		<div
+			class="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none"
+		>
+			<div
+				class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-pink-600/10 rounded-full blur-[120px]"
+			>
+			</div>
+			<div
+				class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px]"
+			>
+			</div>
+		</div>
+
+		<nav
+			class="sticky top-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/5 px-6 py-4 flex justify-between items-center"
+		>
+			<div class="flex items-center gap-3">
+				<div
+					class="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-black text-xs italic"
+				>
+					E
+				</div>
+				<a
+					href="/admin"
+					class="font-['Outfit'] font-black text-xl tracking-tighter"
+					>Uma <span class="text-pink-500">CMS</span></a
+				>
+			</div>
+			<div class="flex items-center gap-6">
+				<a
+					href="/"
+					class="text-sm font-bold text-gray-400 hover:text-white transition-colors"
+					>View Site</a
+				>
+				<div class="h-4 w-[1px] bg-white/10"></div>
+				<div class="flex items-center gap-2">
+					<div
+						class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]"
+					>
+					</div>
+					<span
+						class="text-[10px] font-black uppercase tracking-widest text-gray-500"
+						>Live Backend</span
+					>
+				</div>
+			</div>
+		</nav>
+
+		<main class="max-w-6xl mx-auto p-8 animate-in fade-in duration-700">
+			<slot />
+		</main>
+
+		<footer
+			class="mt-20 border-t border-white/5 py-10 text-center text-gray-600 text-xs font-medium tracking-widest"
+		>
+			&copy; 2026 FAST UMA BLOG CMS &bull; POWERED BY ELYSIA + ASTRO
+		</footer>
+	</body>
+</html>
+
+<style is:global>
+	@import "tailwindcss";
+
+	:root {
+		--accent: 236, 72, 153; /* pink-500 */
+		--accent-light: 244, 114, 182;
+		--accent-dark: 190, 24, 93;
+	}
+
+	body {
+		scrollbar-gutter: stable;
+	}
+
+	.text-gradient {
+		@apply bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500;
+	}
+
+	/* Glassmorphism utility */
+	.glass {
+		@apply backdrop-blur-xl bg-white/[0.03] border border-white/10;
+	}
+</style>

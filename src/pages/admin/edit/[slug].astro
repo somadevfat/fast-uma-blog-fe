@@ -1,0 +1,56 @@
+---
+export const prerender = false;
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { PostEditor } from "../../../features/blog/components/PostEditor";
+import { API_BASE_URL } from "../../../lib/api";
+
+const { slug } = Astro.params;
+
+let initialData = undefined;
+if (slug !== "new") {
+  try {
+    const response = await fetch(`${API_BASE_URL}/posts/${slug}`);
+    const result = await response.json();
+    if (result.success) {
+      initialData = result.data;
+    }
+  } catch (err) {
+    console.error("Failed to fetch post data", err);
+  }
+}
+---
+
+<AdminLayout title={slug === "new" ? "New Article" : "Edit Article"}>
+  <div class="max-w-7xl mx-auto">
+    <div
+      class="mb-12 flex items-center gap-4 text-xs font-black uppercase tracking-[0.2em] text-gray-500"
+    >
+      <a
+        href="/admin"
+        class="hover:text-pink-500 transition-colors flex items-center gap-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-4 h-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          ><polyline points="15 18 9 12 15 6"></polyline></svg
+        >
+        Dashboard
+      </a>
+      <span class="opacity-30">/</span>
+      <span class="text-white">{slug === "new" ? "Constructor" : "Editor"}</span
+      >
+    </div>
+
+    <PostEditor
+      client:load
+      initialData={initialData}
+      apiBaseUrl={API_BASE_URL}
+    />
+  </div>
+</AdminLayout>
