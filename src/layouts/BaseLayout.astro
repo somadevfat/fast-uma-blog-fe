@@ -1,41 +1,130 @@
 ---
-import '../styles/global.css';
+import "../styles/global.css";
 
 interface Props {
   title: string;
   description?: string;
 }
 
-const { title, description = "A fast blog & portfolio built with Astro and ElysiaJS" } = Astro.props;
+const { title, description = "攻略Wikiスタイルの高速ブログ＆ポートフォリオ" } =
+  Astro.props;
+
+const currentYear = new Date().getFullYear();
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    <title>{title} - Fast Uma Wiki</title>
   </head>
-  <body class="bg-white text-gray-900 min-h-screen flex flex-col">
-    <header class="border-b border-gray-200 sticky top-0 bg-white/80 backdrop-blur-sm z-10">
-      <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
-        <a href="/" class="text-2xl font-black text-blue-600 tracking-tighter">FastUma</a>
-        <div class="space-x-6 text-sm font-medium text-gray-600">
-          <a href="/blog" class="hover:text-blue-600 transition">Blog</a>
-          <a href="/portfolio" class="hover:text-blue-600 transition">Portfolio</a>
+  <body class="bg-gray-100 min-h-screen">
+    <header class="bg-white border-b border-wiki-border sticky top-0 z-50">
+      <div
+        class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between"
+      >
+        <div class="flex items-center gap-4">
+          <a href="/" class="text-xl font-bold flex items-center gap-2">
+            <span
+              class="bg-primary text-white px-2 py-0.5 rounded text-sm italic"
+              >F</span
+            >
+            Fast Uma Wiki
+          </a>
         </div>
-      </nav>
+        <div class="flex gap-6 text-sm">
+          <a href="/blog" class="font-medium hover:text-primary">Blog</a>
+          <a href="/portfolio" class="font-medium hover:text-primary"
+            >Portfolio</a
+          >
+          <a href="/admin/login" class="text-gray-500 hover:text-gray-800"
+            >Login</a
+          >
+        </div>
+      </div>
     </header>
 
-    <main class="flex-grow container mx-auto px-4 py-8">
-      <slot />
-    </main>
+    <div
+      class="max-w-7xl mx-auto flex flex-col md:flex-row min-h-[calc(100vh-3.5rem)]"
+    >
+      <!-- Left Sidebar (Menu) -->
+      <aside
+        class="w-full md:w-64 bg-wiki-sidebar-bg border-r border-wiki-border p-4 shrink-0"
+      >
+        <div class="sidebar-box">
+          <div class="sidebar-title">ナビゲーション</div>
+          <ul class="space-y-1 text-sm">
+            <li><a href="/">トップページ</a></li>
+            <li><a href="/blog">最新の記事</a></li>
+            <li><a href="/portfolio">ポートフォリオ</a></li>
+          </ul>
+        </div>
 
-    <footer class="bg-gray-50 border-t border-gray-200 mt-12 py-8 text-center text-sm text-gray-500">
-      <p>&copy; {new Date().getFullYear()} Fast Uma Blog. Built with Astro & Elysia.</p>
+        <div class="sidebar-box">
+          <div class="sidebar-title">リンク</div>
+          <ul class="space-y-1 text-sm">
+            <li>
+              <a href="https://github.com/somadevfat" target="_blank">GitHub</a>
+            </li>
+            <li><a href="#" target="_blank">Twitter / X</a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-grow bg-white p-6 md:p-10 wiki-container">
+        <nav class="breadcrumbs">
+          <a href="/">Top</a> &gt; {title}
+        </nav>
+
+        <article class="prose max-w-none">
+          <slot />
+        </article>
+      </main>
+
+      <!-- Right Sidebar (Optional Info) -->
+      <aside
+        class="w-full md:w-64 bg-wiki-sidebar-bg border-l border-wiki-border p-4 shrink-0 hidden lg:block"
+      >
+        <div class="sidebar-box">
+          <div class="sidebar-title">インフォメーション</div>
+          <div class="text-xs space-y-2 text-gray-600">
+            <p><strong>現在のバージョン:</strong> 2.0.0</p>
+            <p><strong>最終更新:</strong> 2026/01/31</p>
+          </div>
+        </div>
+
+        <div class="sidebar-box">
+          <div class="sidebar-title">タグクラウド</div>
+          <div class="flex flex-wrap gap-1">
+            <span class="text-[10px] bg-gray-200 px-1 border border-gray-300"
+              >Astro</span
+            >
+            <span class="text-[10px] bg-gray-200 px-1 border border-gray-300"
+              >Elysia</span
+            >
+            <span class="text-[10px] bg-gray-200 px-1 border border-gray-300"
+              >Bun</span
+            >
+            <span class="text-[10px] bg-gray-200 px-1 border border-gray-300"
+              >TypeScript</span
+            >
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer
+      class="bg-gray-200 border-t border-wiki-border py-6 text-center text-xs text-gray-600"
+    >
+      <div class="container mx-auto px-4">
+        <p>&copy; {currentYear} Fast Uma Wiki - Powered by Astro & ElysiaJS</p>
+        <p class="mt-1">このサイトはWikiスタイルの個人ブログです。</p>
+      </div>
     </footer>
   </body>
 </html>

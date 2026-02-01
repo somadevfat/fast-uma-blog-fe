@@ -1,40 +1,73 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
 
-const projects = (await getCollection('portfolio')).sort(
-  (a, b) => a.data.sortOrder - b.data.sortOrder
+const projects = (await getCollection("portfolio")).sort(
+  (a, b) => a.data.sortOrder - b.data.sortOrder,
 );
 ---
 
-<BaseLayout title="Portfolio | Fast Uma">
-  <section>
-    <h1 class="text-4xl font-bold mb-12">Portfolio</h1>
-    <div class="grid md:grid-cols-2 gap-8">
-      {projects.map((project) => (
-        <article class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition">
-          {project.data.image && (
-            <div class="aspect-video bg-gray-100 flex items-center justify-center text-gray-400">
-               {/* Replace with actual image tag later */}
-               <span class="text-sm">Image: {project.data.image}</span>
-            </div>
-          )}
-          <div class="p-6">
-            <h2 class="text-2xl font-bold mb-2">{project.data.title}</h2>
-            <p class="text-gray-600 mb-4">{project.data.description}</p>
-            <div class="flex flex-wrap gap-2 mb-6">
-              {project.data.techStack?.map(tech => (
-                <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md font-medium">{tech}</span>
-              ))}
-            </div>
+<BaseLayout title="ポートフォリオ">
+  <h1>ポートフォリオ</h1>
+  <p>これまでに開発した主なプロジェクトや実験的な制作物の一覧です。</p>
+
+  <div class="space-y-12 my-8">
+    {
+      projects.map((project) => (
+        <section class="border border-wiki-border bg-white overflow-hidden">
+          <div class="bg-wiki-header-bg border-b border-wiki-border px-4 py-2 font-bold text-lg flex justify-between items-center">
+            {project.data.title}
             {project.data.link && (
-               <a href={project.data.link} target="_blank" rel="noopener noreferrer" class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition">
-                 View Project
-               </a>
+              <a
+                href={project.data.link}
+                target="_blank"
+                class="text-xs font-normal bg-primary text-white px-2 py-0.5 rounded"
+              >
+                外部リンク
+              </a>
             )}
           </div>
-        </article>
-      ))}
-    </div>
-  </section>
+          <div class="p-6 md:flex gap-8">
+            {project.data.image && (
+              <div class="md:w-1/3 mb-4 md:mb-0">
+                <div class="aspect-video bg-gray-100 border border-gray-200 flex items-center justify-center italic text-gray-400 text-xs text-center p-4">
+                  Image: {project.data.image}
+                </div>
+              </div>
+            )}
+            <div class={`${project.data.image ? "md:w-2/3" : "w-full"}`}>
+              <div class="mb-4">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">
+                  Description
+                </span>
+                <p class="text-sm leading-relaxed">
+                  {project.data.description}
+                </p>
+              </div>
+
+              <div>
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">
+                  Tech Stack
+                </span>
+                <div class="flex flex-wrap gap-2">
+                  {project.data.techStack?.map((tech) => (
+                    <span class="px-2 py-0.5 bg-gray-50 border border-wiki-border text-[10px] font-mono">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      ))
+    }
+  </div>
+
+  <div class="sidebar-box text-xs bg-blue-50 border-blue-200">
+    <p>
+      ※
+      各プロジェクトの詳細はGitHubリポジトリ等でも随時更新しています。最新のコードはGitHubをご確認ください。
+    </p>
+  </div>
 </BaseLayout>

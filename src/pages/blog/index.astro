@@ -18,9 +18,9 @@ try {
       slug: post.slug,
       data: {
         title: post.title,
-        description: "", // Fallback or add to DB
+        description: "",
         pubDate: new Date(post.createdAt),
-        tags: [], // Fallback
+        tags: post.tags?.split(",") || [],
       },
     }));
   }
@@ -34,71 +34,54 @@ const allPosts = [...filePosts, ...dbPosts].sort(
 );
 ---
 
-<BaseLayout title="Blog | fanda-dev.com">
-  <section class="max-w-4xl mx-auto">
-    <header class="mb-16">
-      <h1 class="text-5xl md:text-7xl font-black mb-6 tracking-tighter">
-        <span class="text-gradient">Blog</span>
-      </h1>
-      <p class="text-xl text-muted leading-relaxed max-w-2xl font-bold">
-        技術、デザイン、そして日々の開発で見つけた知見を綴ります。
-      </p>
-    </header>
+<BaseLayout title="記事一覧">
+  <h1>記事一覧</h1>
 
-    <div class="grid gap-8">
-      {
-        allPosts.map((post) => (
-          <a href={`/blog/${post.slug}`} class="group">
-            <article class="glass p-8 rounded-3xl border-white/5 hover:border-accent/30 transition-all duration-500 relative overflow-hidden">
-              <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 blur-3xl -z-10 group-hover:bg-accent/10 transition-colors" />
+  <p>
+    これまでに投稿された記事の一覧です。技術解説から日常のメモまで幅広く記録しています。
+  </p>
 
-              <div class="flex flex-col gap-4">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-4 text-xs font-black tracking-widest text-muted uppercase">
-                    <time datetime={post.data.pubDate.toISOString()}>
-                      {post.data.pubDate.toLocaleDateString("ja-JP")}
-                    </time>
-                    {post.data.tags && (
-                      <div class="flex gap-2">
-                        {post.data.tags.slice(0, 2).map((tag: string) => (
-                          <span class="text-accent"># {tag}</span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <ViewCounter client:load slug={post.slug} simple={true} />
-                </div>
+  <div class="my-8">
+    <table>
+      <thead>
+        <tr>
+          <th width="120">日付</th>
+          <th>記事タイトル</th>
+          <th width="100">閲覧数</th>
+          <th>タグ</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          allPosts.map((post) => (
+            <tr>
+              <td class="text-sm text-gray-600">
+                {post.data.pubDate.toLocaleDateString("ja-JP")}
+              </td>
+              <td class="font-bold">
+                <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+              </td>
+              <td>
+                <ViewCounter client:load slug={post.slug} simple={true} />
+              </td>
+              <td class="text-xs">
+                {post.data.tags?.map((tag: string) => (
+                  <span class="inline-block bg-wiki-header-bg border border-wiki-border px-1 mr-1 mb-1">
+                    {tag}
+                  </span>
+                ))}
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
 
-                <h2 class="text-3xl font-black group-hover:text-gradient transition-all duration-300">
-                  {post.data.title}
-                </h2>
-
-                <p class="text-muted leading-relaxed line-clamp-2 font-medium">
-                  {post.data.description}
-                </p>
-
-                <div class="mt-4 flex items-center gap-2 text-sm font-black text-foreground group-hover:text-accent transition-colors">
-                  記事を読む
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="3"
-                      d="M13 7l5 5m0 0l-5 5m5-5H6"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </article>
-          </a>
-        ))
-      }
-    </div>
-  </section>
+  <div class="sidebar-box mt-12 bg-gray-50">
+    <div class="sidebar-title">カテゴリー別表示 (Coming Soon)</div>
+    <p class="text-xs text-gray-500">
+      現在は日付順に全件表示されています。タグによる絞り込み機能は開発中です。
+    </p>
+  </div>
 </BaseLayout>

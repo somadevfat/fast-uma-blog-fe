@@ -1,4 +1,6 @@
 ---
+import "../styles/global.css";
+
 interface Props {
 	title: string;
 }
@@ -13,97 +15,91 @@ const { title } = Astro.props;
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Outfit:wght@400;700;900&display=swap"
-			rel="stylesheet"
-		/>
-		<title>{title} | Admin CMS</title>
+		<title>{title} - Fast Uma Wiki Admin</title>
 	</head>
-	<body
-		class="bg-[#050505] text-white font-['Inter'] selection:bg-pink-500/30"
-	>
-		<!-- Background glow -->
-		<div
-			class="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none"
+	<body class="bg-gray-100 min-h-screen">
+		<header
+			class="bg-gray-900 text-white border-b border-gray-700 h-14 flex items-center px-6 justify-between sticky top-0 z-50"
 		>
-			<div
-				class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-pink-600/10 rounded-full blur-[120px]"
-			>
+			<div class="flex items-center gap-4">
+				<a href="/admin" class="font-bold flex items-center gap-2">
+					<span
+						class="bg-primary text-white px-2 py-0.5 rounded text-xs italic"
+						>A</span
+					>
+					Fast Uma Admin
+				</a>
 			</div>
 			<div
-				class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px]"
+				class="flex items-center gap-6 text-xs uppercase tracking-widest font-bold"
 			>
-			</div>
-		</div>
-
-		<nav
-			class="sticky top-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/5 px-6 py-4 flex justify-between items-center"
-		>
-			<div class="flex items-center gap-3">
-				<div
-					class="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-black text-xs italic"
-				>
-					E
-				</div>
-				<a
-					href="/admin"
-					class="font-['Outfit'] font-black text-xl tracking-tighter"
-					>Uma <span class="text-pink-500">CMS</span></a
-				>
-			</div>
-			<div class="flex items-center gap-6">
 				<a
 					href="/"
-					class="text-sm font-bold text-gray-400 hover:text-white transition-colors"
+					class="text-gray-400 hover:text-white transition-colors"
 					>View Site</a
 				>
-				<div class="h-4 w-[1px] bg-white/10"></div>
+				<div class="h-4 w-px bg-gray-700"></div>
 				<div class="flex items-center gap-2">
-					<div
-						class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]"
-					>
-					</div>
-					<span
-						class="text-[10px] font-black uppercase tracking-widest text-gray-500"
-						>Live Backend</span
-					>
+					<div class="w-2 h-2 rounded-full bg-green-500"></div>
+					<span class="text-gray-500">System Online</span>
 				</div>
 			</div>
-		</nav>
+		</header>
 
-		<main class="max-w-6xl mx-auto p-8 animate-in fade-in duration-700">
-			<slot />
-		</main>
+		<div class="flex flex-col md:flex-row min-h-[calc(100vh-3.5rem)]">
+			<!-- Admin Sidebar -->
+			<aside
+				class="w-full md:w-64 bg-gray-50 border-r border-wiki-border p-6 shrink-0"
+			>
+				<div class="sidebar-box !bg-white">
+					<div class="sidebar-title">管理メニュー</div>
+					<ul class="space-y-2 text-sm">
+						<li>
+							<a
+								href="/admin"
+								class="flex items-center gap-2 font-medium"
+								><span class="opacity-30">■</span> ダッシュボード</a>
+						</li>
+						<li>
+							<a
+								href="/admin/posts"
+								class="flex items-center gap-2 font-medium"
+								><span class="opacity-30">■</span> 記事管理</a>
+						</li>
+						<li>
+							<a
+								href="/admin/portfolio"
+								class="flex items-center gap-2 font-medium"
+								><span class="opacity-30">■</span> ポートフォリオ管理</a>
+						</li>
+					</ul>
+				</div>
+
+				<div class="sidebar-box !bg-white">
+					<div class="sidebar-title">システム設定</div>
+					<ul class="space-y-2 text-sm text-gray-500">
+						<li>設定 (Coming Soon)</li>
+						<li>ユーザー管理 (Coming Soon)</li>
+					</ul>
+				</div>
+			</aside>
+
+			<!-- Admin Main -->
+			<main class="flex-grow p-8 md:p-12">
+				<div class="max-w-5xl mx-auto">
+					<nav class="breadcrumbs">
+						Admin &gt; {title}
+					</nav>
+					<slot />
+				</div>
+			</main>
+		</div>
 
 		<footer
-			class="mt-20 border-t border-white/5 py-10 text-center text-gray-600 text-xs font-medium tracking-widest"
+			class="bg-white border-t border-wiki-border py-4 px-8 text-center text-[10px] text-gray-400 font-bold uppercase tracking-widest"
 		>
-			&copy; 2026 FAST UMA BLOG CMS &bull; POWERED BY ELYSIA + ASTRO
+			&copy; {new Date().getFullYear()} Fast Uma Wiki Admin Tools &mdash; Astro
+			+ Elysia CMS
 		</footer>
 	</body>
 </html>
-
-<style is:global>
-	@import "tailwindcss";
-
-	:root {
-		--accent: 236, 72, 153; /* pink-500 */
-		--accent-light: 244, 114, 182;
-		--accent-dark: 190, 24, 93;
-	}
-
-	body {
-		scrollbar-gutter: stable;
-	}
-
-	.text-gradient {
-		@apply bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500;
-	}
-
-	/* Glassmorphism utility */
-	.glass {
-		@apply backdrop-blur-xl bg-white/[0.03] border border-white/10;
-	}
-</style>

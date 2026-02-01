@@ -26,15 +26,15 @@ export default function ViewCounter({ slug, simple }: { slug: string, simple?: b
 
   if (simple) {
     return (
-      <span className="text-[10px] font-black tracking-widest text-gray-500 uppercase">
+      <span className="text-[10px] font-bold tracking-widest text-elysia-muted uppercase">
         {views} Views
       </span>
     );
   }
 
   return (
-    <span className="text-muted text-xs font-black tracking-widest flex items-center gap-2 uppercase">
-      <div className="w-1 h-1 rounded-full bg-accent"></div>
+    <span className="text-elysia-muted text-[10px] font-bold tracking-widest flex items-center gap-2 uppercase">
+      <div className="w-1 h-1 rounded-full bg-primary/60"></div>
       {views} Views
     </span>
   );

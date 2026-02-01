@@ -1,1 +1,156 @@
 @import "tailwindcss";
+
+@theme {
+  --color-wiki-bg: #ffffff;
+  --color-wiki-text: #333333;
+  --color-wiki-link: #0000ee;
+  --color-wiki-link-visited: #551a8b;
+  --color-wiki-sidebar-bg: #f8f9fa;
+  --color-wiki-border: #cccccc;
+  --color-wiki-header-bg: #f0f7ff;
+  --color-wiki-heading-border: #4a90e2;
+  --color-primary: #4a90e2;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+body {
+  background-color: var(--color-wiki-bg);
+  color: var(--color-wiki-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--color-wiki-link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--color-wiki-link-visited);
+}
+
+/* Wiki Heading Styles */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #000;
+  font-weight: bold;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--color-wiki-border);
+  padding-bottom: 10px;
+}
+
+h2 {
+  font-size: 1.5em;
+  background-color: var(--color-wiki-header-bg);
+  border-left: 5px solid var(--color-wiki-heading-border);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-wiki-border);
+}
+
+h3 {
+  font-size: 1.25em;
+  border-bottom: 1px dotted var(--color-wiki-border);
+  padding-bottom: 5px;
+}
+
+/* Wiki Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  font-size: 0.95em;
+  border: 1px solid var(--color-wiki-border);
+}
+
+th {
+  background-color: var(--color-wiki-header-bg);
+  color: #000;
+  font-weight: bold;
+  padding: 10px;
+  text-align: left;
+  border: 1px solid var(--color-wiki-border);
+}
+
+td {
+  padding: 8px 10px;
+  border: 1px solid var(--color-wiki-border);
+}
+
+tr:nth-child(even) {
+  background-color: #fcfcfc;
+}
+
+/* Sidebar Utilities */
+.sidebar-box {
+  background: var(--color-wiki-sidebar-bg);
+  border: 1px solid var(--color-wiki-border);
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.sidebar-title {
+  font-weight: bold;
+  border-bottom: 2px solid var(--color-wiki-heading-border);
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  font-size: 0.9em;
+  text-transform: uppercase;
+}
+
+/* Infobox Styles */
+.infobox {
+  float: right;
+  width: 300px;
+  background-color: var(--color-wiki-sidebar-bg);
+  border: 1px solid var(--color-wiki-border);
+  padding: 10px;
+  margin-left: 20px;
+  margin-bottom: 20px;
+  font-size: 0.9em;
+}
+
+.infobox th {
+  width: 40%;
+  background-color: #eee;
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+  font-size: 0.85em;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* New/Update Tags */
+.tag-new {
+  background-color: #ff4444;
+  color: #fff;
+  font-size: 0.7em;
+  padding: 1px 4px;
+  border-radius: 2px;
+  vertical-align: middle;
+  font-weight: bold;
+}
+
+/* Premium Retro Touches */
+.wiki-container {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+  background: white;
+}

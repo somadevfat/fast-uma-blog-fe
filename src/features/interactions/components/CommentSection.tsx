@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { interactionsApi, type Comment } from '../api/interactions.api';
 
+/**
+ * Wikiスタイルのコメントセクションコンポーネント
+ */
 export default function CommentSection({ slug }: { slug: string }) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
@@ -12,6 +15,9 @@ export default function CommentSection({ slug }: { slug: string }) {
       .catch(console.error);
   }, [slug]);
 
+  /**
+   * コメント送信処理
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
@@ -19,7 +25,6 @@ export default function CommentSection({ slug }: { slug: string }) {
     setLoading(true);
     try {
       const newCommentData = await interactionsApi.postComment(slug, newComment);
-      // 再フェッチせずにステートを更新 (効率化)
       setComments(prev => [newCommentData, ...prev]);
       setNewComment('');
     } catch (e) {
@@ -30,38 +35,48 @@ export default function CommentSection({ slug }: { slug: string }) {
   };
 
   return (
-    <div className="mt-8">
-      <h3 className="text-xl font-bold mb-4">Comments ({comments.length})</h3>
-      
-      <form onSubmit={handleSubmit} className="mb-6">
-        <textarea
-          className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-          rows={3}
-          placeholder="Leave a comment..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          disabled={loading}
-        />
-        <button
-          type="submit"
-          disabled={loading || !newComment.trim()}
-          className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-        >
-          {loading ? 'Posting...' : 'Post Comment'}
-        </button>
-      </form>
+    <div className="mt-8 space-y-6">
+      <div className="sidebar-box !mb-0 !bg-gray-50 border-wiki-border">
+        <div className="sidebar-title">コメントを投稿する</div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <textarea
+            className="w-full p-3 bg-white border border-wiki-border text-sm focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+            rows={3}
+            placeholder="コメントを入力してください..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            disabled={loading}
+          />
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={loading || !newComment.trim()}
+              className="px-4 py-2 bg-primary text-white text-xs font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
+            >
+              {loading ? '送信中...' : 'コメントを投稿'}
+            </button>
+          </div>
+        </form>
+      </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {comments.map((comment) => (
-          <div key={comment.id} className="p-4 bg-gray-50 rounded-lg">
-            <p className="text-gray-800">{comment.content}</p>
-            <p className="text-xs text-gray-500 mt-2">
-              {new Date(comment.created_at).toLocaleString()}
-            </p>
+          <div key={comment.id} className="p-4 border border-wiki-border bg-white shadow-sm">
+            <div className="flex justify-between items-center mb-2 border-b border-gray-100 pb-1">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                Anonymous User
+              </span>
+              <span className="text-[10px] text-gray-400">
+                {new Date(comment.created_at).toLocaleString('ja-JP')}
+              </span>
+            </div>
+            <p className="text-gray-700 text-sm leading-relaxed">{comment.content}</p>
           </div>
         ))}
         {comments.length === 0 && (
-          <p className="text-gray-500 italic">No comments yet.</p>
+          <p className="text-gray-400 text-sm italic py-4 text-center border border-dashed border-wiki-border">
+            まだコメントはありません。
+          </p>
         )}
       </div>
     </div>

@@ -6,87 +6,71 @@ import { API_BASE_URL } from "../../lib/api";
 // Redirect if already logged in (Server side check could be here, but let's simple first)
 ---
 
-<AdminLayout title="Login">
+<AdminLayout title="ログイン">
     <div class="max-w-md mx-auto mt-20">
-        <div
-            class="glass p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden"
-        >
-            <!-- Glow effect inside card -->
+        <div class="bg-white border border-wiki-border shadow-sm">
             <div
-                class="absolute -top-24 -right-24 w-48 h-48 bg-pink-500/10 rounded-full blur-[80px]"
+                class="bg-wiki-header-bg border-b border-wiki-border px-6 py-3 font-bold"
             >
+                管理者認証
             </div>
 
-            <div class="relative z-10 space-y-8">
-                <div class="text-center space-y-2">
-                    <div
-                        class="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-black text-xl italic mx-auto mb-4"
-                    >
-                        E
-                    </div>
-                    <h1
-                        class="text-3xl font-black font-['Outfit'] tracking-tighter"
-                    >
-                        Identity <span class="text-gradient">Verification</span>
-                    </h1>
-                    <p
-                        class="text-gray-500 text-sm font-medium uppercase tracking-widest"
-                    >
-                        Admin Portal Access
+            <div class="p-8 space-y-6">
+                <div class="text-center mb-6">
+                    <p class="text-xs text-gray-500">
+                        Wikiの編集を行うには管理権限が必要です。
                     </p>
                 </div>
 
                 <form id="login-form" class="space-y-6">
-                    <div class="space-y-2">
-                        <label
-                            class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 ml-1"
-                            >Username</label
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-gray-600"
+                            >ユーザー名</label
                         >
                         <input
                             type="text"
                             name="username"
                             required
-                            class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-pink-500/50 transition-colors placeholder:text-gray-700"
+                            class="w-full bg-gray-50 border border-wiki-border px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                             placeholder="admin"
                         />
                     </div>
 
-                    <div class="space-y-2">
-                        <label
-                            class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 ml-1"
-                            >Access Credentials</label
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-gray-600"
+                            >パスワード</label
                         >
                         <input
                             type="password"
                             name="password"
                             required
-                            class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-pink-500/50 transition-colors placeholder:text-gray-700"
+                            class="w-full bg-gray-50 border border-wiki-border px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                             placeholder="••••••••"
                         />
                     </div>
 
                     <div
                         id="error-message"
-                        class="text-red-500 text-xs font-bold hidden text-center animate-bounce"
+                        class="text-red-600 text-xs font-bold hidden text-center border border-red-200 bg-red-50 p-2"
                     >
-                        Access Denied: Invalid Credentials
+                        認証失敗: ユーザー名またはパスワードが正しくありません。
                     </div>
 
                     <button
                         type="submit"
-                        class="w-full bg-white text-black font-black uppercase tracking-widest text-xs py-4 rounded-xl hover:bg-pink-500 hover:text-white transition-all shadow-xl hover:shadow-pink-500/20 active:scale-[0.98]"
+                        class="w-full bg-primary text-white font-bold text-sm py-3 hover:opacity-90 transition-opacity"
                     >
-                        Authorize Access
+                        認証を開始する
                     </button>
                 </form>
             </div>
         </div>
 
-        <div class="mt-8 text-center">
+        <div class="mt-8 text-center text-xs">
             <a
                 href="/"
-                class="text-xs font-black uppercase tracking-widest text-gray-600 hover:text-gray-400 transition-colors"
-                >&larr; Return to Central Node</a
+                class="text-gray-500 hover:text-primary transition-colors hover:underline"
+                >&laquo; 公開Wikiへ戻る</a
             >
         </div>
     </div>
@@ -112,8 +96,6 @@ import { API_BASE_URL } from "../../lib/api";
 
             const result = await res.json();
             if (result.success) {
-                // Cookie is already set by backend HttpOnly?
-                // Let's check. Yes, I set it in AuthController.
                 window.location.href = "/admin";
             } else {
                 errorMsg?.classList.remove("hidden");

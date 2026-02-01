@@ -1,50 +1,117 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-).slice(0, 3);
+const posts = (await getCollection("blog"))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 5);
 
-const projects = (await getCollection('portfolio')).sort(
-  (a, b) => a.data.sortOrder - b.data.sortOrder
-).slice(0, 3);
+const projects = (await getCollection("portfolio"))
+  .sort((a, b) => a.data.sortOrder - b.data.sortOrder)
+  .slice(0, 5);
 ---
 
-<BaseLayout title="Fast Uma Blog">
-  <section class="py-20 text-center">
-    <h1 class="text-6xl font-black text-gray-900 mb-6 tracking-tight">
-      Build Faster. <span class="text-blue-600">Ship Faster.</span>
-    </h1>
-    <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-10">
-      A personal playground for exploring high-performance web technologies.
-      Powered by Astro, Bun, ElysiaJS, and Cloud Run.
-    </p>
-    <div class="flex justify-center gap-4">
-      <a href="/blog" class="px-8 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition">Read Blog</a>
-      <a href="/portfolio" class="px-8 py-3 bg-gray-100 text-gray-900 font-bold rounded-lg hover:bg-gray-200 transition">View Work</a>
-    </div>
-  </section>
+<BaseLayout title="トップページ">
+  <h1>Fast Uma Wiki へようこそ</h1>
 
-  <section class="py-12">
-    <div class="flex justify-between items-end mb-8">
-      <h2 class="text-3xl font-bold">Latest Posts</h2>
-      <a href="/blog" class="text-blue-600 font-medium hover:underline">View all &rarr;</a>
-    </div>
-    <div class="grid md:grid-cols-3 gap-8">
-      {posts.map((post) => (
-        <a href={`/blog/${post.slug}`} class="group">
-          <article class="bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition p-6 h-full flex flex-col">
-            <h3 class="text-xl font-bold mb-2 group-hover:text-blue-600 transition">{post.data.title}</h3>
-            <p class="text-gray-500 text-sm mb-4 line-clamp-2">{post.data.description}</p>
-            <div class="mt-auto text-xs text-gray-400">
-              <time datetime={post.data.pubDate.toISOString()}>
-                {post.data.pubDate.toLocaleDateString()}
-              </time>
-            </div>
-          </article>
-        </a>
-      ))}
-    </div>
-  </section>
+  <p>
+    このサイトは、エンジニアリング、デザイン、そして日々の開発の記録をWiki形式でまとめたパーソナル・ブログです。<br
+    />
+    2000年代の攻略Wikiのような懐かしさと、現代的な技術（Astro + ElysiaJS + Bun）による高速な動作を両立させています。
+  </p>
+
+  <div class="infobox">
+    <table>
+      <tr
+        ><th
+          colspan="2"
+          style="text-align:center; background:#4a90e2; color:white;"
+          >サイト情報</th
+        ></tr
+      >
+      <tr><th>管理人</th><td>Somah</td></tr>
+      <tr
+        ><th>技術スタック</th><td>Astro, React, ElysiaJS, Bun, TailwindCSS</td
+        ></tr
+      >
+      <tr><th>目的</th><td>技術の備忘録・成果物の公開</td></tr>
+      <tr><th>状態</th><td>稼働中</td></tr>
+    </table>
+  </div>
+
+  <h2>最新の更新情報</h2>
+  <table>
+    <thead>
+      <tr>
+        <th width="150">更新日</th>
+        <th>タイトル</th>
+        <th width="80">状態</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        posts.map((post) => (
+          <tr>
+            <td>
+              {post.data.pubDate.toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+              })}
+            </td>
+            <td>
+              <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+              {new Date().getTime() - post.data.pubDate.getTime() <
+                7 * 24 * 60 * 60 * 1000 && (
+                <span class="tag-new ml-2">New</span>
+              )}
+            </td>
+            <td>更新</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+  <div class="text-right">
+    <a href="/blog">&raquo; 全ての記事を見る</a>
+  </div>
+
+  <h2>主要プロジェクト</h2>
+  <div class="grid md:grid-cols-2 gap-4 my-6">
+    {
+      projects.map((project) => (
+        <div class="sidebar-box !mb-0">
+          <div class="sidebar-title">{project.data.title}</div>
+          <p class="text-xs mb-3 text-gray-600 h-10 line-clamp-2">
+            {project.data.description}
+          </p>
+          <a href={`/portfolio`} class="text-xs font-bold text-primary">
+            詳細を見る &rarr;
+          </a>
+        </div>
+      ))
+    }
+  </div>
+
+  <h2>Wiki 編集方針</h2>
+  <ul>
+    <li>
+      <strong>情報の正確性:</strong>
+      可能な限り正確な情報を記載しますが、技術のアップデートにより内容が古くなる可能性があります。
+    </li>
+    <li>
+      <strong>アクセシビリティ:</strong>
+      Wikiとしての機能を損なわず、どのデバイスからも読みやすいように設計しています。
+    </li>
+    <li>
+      <strong>継続的な更新:</strong>
+      学んだこと、作ったものを随時「ページ追加」していきます。
+    </li>
+  </ul>
+
+  <div
+    class="mt-12 p-4 bg-yellow-50 border border-yellow-200 text-xs text-yellow-800"
+  >
+    <strong>[お知らせ]</strong> 2026/01/31: サイトデザインを全面的にWikiスタイルへとリニューアルしました。
+  </div>
 </BaseLayout>

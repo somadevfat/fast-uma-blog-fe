@@ -1,11 +1,11 @@
 ---
-import { getCollection, getEntry } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import ViewCounter from '../../features/interactions/components/ViewCounter';
-import LikeButton from '../../features/interactions/components/LikeButton';
-import CommentSection from '../../features/interactions/components/CommentSection';
-import { API_BASE_URL } from '../../lib/api';
-import { marked } from 'marked';
+import { getCollection, getEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ViewCounter from "../../features/interactions/components/ViewCounter";
+import LikeButton from "../../features/interactions/components/LikeButton";
+import CommentSection from "../../features/interactions/components/CommentSection";
+import { API_BASE_URL } from "../../lib/api";
+import { marked } from "marked";
 
 // SSR mode
 export const prerender = false;
@@ -26,21 +26,21 @@ try {
       slug: data.slug,
       data: {
         title: data.title,
-        description: "", // DB posts might need this column later
+        description: "",
         pubDate: new Date(data.createdAt),
-        heroImage: "", // DB posts might need this too
+        heroImage: "",
       },
-      content: data.content
+      content: data.content,
     };
     isDbPost = true;
   }
 } catch (e) {
-  console.error('DB Fetch error', e);
+  console.error("DB Fetch error", e);
 }
 
 // 2. Try File
 if (!isDbPost) {
-  const entry = await getEntry('blog', slug as any);
+  const entry = await getEntry("blog", slug as any);
   if (entry) {
     const rendered = await entry.render();
     Content = rendered.Content;
@@ -49,77 +49,97 @@ if (!isDbPost) {
 }
 
 if (!post) {
-  return Astro.redirect('/404');
+  return Astro.redirect("/404");
 }
 
-const htmlContent = isDbPost ? await marked.parse(post.content) : '';
+const htmlContent = isDbPost ? await marked.parse(post.content) : "";
 ---
 
-<BaseLayout title={`${post.data.title} | fanda-dev.com`} description={post.data.description}>
-  <div class="max-w-4xl mx-auto">
-    <!-- Breadcrumb -->
-    <nav class="flex gap-2 text-xs font-black tracking-widest text-muted uppercase mb-12">
-      <a href="/" class="hover:text-accent transition">Home</a>
-      <span>/</span>
-      <a href="/blog" class="hover:text-accent transition">Blog</a>
-      <span>/</span>
-      <span class="text-accent">Article</span>
-    </nav>
-
-    <header class="mb-16">
-      <div class="flex flex-wrap items-center gap-4 text-xs font-black text-muted mb-6">
-        <time datetime={post.data.pubDate.toISOString()} class="px-4 py-1.5 glass rounded-full border-white/5 uppercase tracking-widest">
-          {post.data.pubDate.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' })}
-        </time>
-        <div class="flex items-center gap-2">
-           <ViewCounter client:load slug={post.slug} />
-        </div>
-      </div>
-      
-      <h1 class="text-4xl md:text-6xl font-black mb-8 leading-[1.2] tracking-tighter">
-        {post.data.title}
-      </h1>
-      
-      <p class="text-xl text-muted leading-relaxed font-bold">
-        {post.data.description}
-      </p>
-    </header>
-
-    {post.data.heroImage && (
-      <div class="relative mb-20 group">
-        <div class="absolute -inset-1 bg-gradient-to-r from-accent to-accent-secondary rounded-3xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
-        <img
-          src={post.data.heroImage}
-          alt=""
-          class="relative w-full h-auto rounded-3xl shadow-2xl border border-white/5"
-        />
-      </div>
-    )}
-
-    <div class="prose prose-invert prose-pink max-w-none 
-      prose-headings:font-black prose-headings:tracking-tighter
-      prose-p:font-medium prose-p:leading-relaxed
-      prose-a:text-accent hover:prose-a:text-accent/80 transition-colors
-      prose-img:rounded-3xl prose-img:shadow-xl
-      mb-32">
-      {isDbPost ? <Fragment set:html={htmlContent} /> : <Content />}
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <div class="mb-8 border-b border-wiki-border pb-4">
+    <div class="flex items-center gap-4 text-xs text-gray-500 mb-2">
+      <time datetime={post.data.pubDate.toISOString()}>
+        投稿日: {post.data.pubDate.toLocaleDateString("ja-JP")}
+      </time>
+      <span>|</span>
+      <ViewCounter client:load slug={post.slug} />
     </div>
+    <h1>{post.data.title}</h1>
+  </div>
 
-    <footer class="mt-32">
-      <div class="glass p-12 rounded-[2.5rem] border-white/5 flex flex-col md:flex-row items-center justify-between gap-10 mb-20 relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent to-accent-secondary"></div>
-        <div class="text-center md:text-left relative">
-          <h3 class="text-3xl font-black mb-3 tracking-tight text-white">この記事はいかがでしたか？</h3>
-          <p class="text-muted font-bold">「いいね」での応援や、コメントをお待ちしております。</p>
-        </div>
-        <div class="relative">
-          <LikeButton client:load slug={post.slug} />
-        </div>
+  {
+    post.data.heroImage && (
+      <div class="mb-8 overflow-hidden border border-wiki-border p-1 bg-white">
+        <img src={post.data.heroImage} alt="" class="w-full h-auto" />
       </div>
+    )
+  }
 
-      <div class="max-w-3xl mx-auto">
-        <CommentSection client:visible slug={post.slug} />
+  <div class="wiki-content mb-12">
+    {isDbPost ? <Fragment set:html={htmlContent} /> : <Content />}
+  </div>
+
+  <div class="sidebar-box border-dashed">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="text-sm">
+        <strong>この記事への評価:</strong>
+        <p class="text-xs text-gray-500">
+          役に立ったら「いいね」をお願いします。
+        </p>
       </div>
-    </footer>
+      <LikeButton client:load slug={post.slug} />
+    </div>
+  </div>
+
+  <div class="mt-12 border-t border-wiki-border pt-8">
+    <h2 class="!mt-0 !bg-transparent !border-l-0 !pl-0 text-xl font-bold mb-6">
+      コメント一覧
+    </h2>
+    <CommentSection client:visible slug={post.slug} />
   </div>
 </BaseLayout>
+
+<style is:global>
+  /* Wiki-like prose overrides */
+  .wiki-content {
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+  .wiki-content p {
+    margin-bottom: 1.5em;
+  }
+  .wiki-content h2 {
+    margin-top: 2em;
+    margin-bottom: 1em;
+  }
+  .wiki-content img {
+    border: 1px solid #ccc;
+    padding: 4px;
+    background: #fff;
+    max-width: 100%;
+    height: auto;
+  }
+  .wiki-content pre {
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-left: 3px solid #4a90e2;
+    padding: 1em;
+    overflow-x: auto;
+    font-size: 0.9em;
+    margin-bottom: 1.5em;
+  }
+  .wiki-content code:not(pre code) {
+    background: #f0f0f0;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+  .wiki-content ul,
+  .wiki-content ol {
+    margin-bottom: 1.5em;
+    padding-left: 1.5em;
+  }
+  .wiki-content li {
+    margin-bottom: 0.5em;
+  }
+</style>
